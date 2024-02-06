@@ -1,0 +1,59 @@
+
+// PAX Multi TMA HMA 8 for MT5
+// Developer: Forex Robot Easy Team
+// Website: forexroboteasy.com
+
+// Calculate TMA based on the specified period
+double CalculateTMA(int period) {
+    double sum = 0;
+    for (int i = 0; i < period; i++) {
+        sum += Close[i];
+    }
+    return sum / period;
+}
+
+// Calculate HMA based on the specified period
+double CalculateHMA(int period) {
+    int halfPeriod = period / 2;
+    double wma1 = 0;
+    double wma2 = 0;
+    double wma3 = 0;
+    for (int i = 0; i < halfPeriod; i++) {
+        wma1 += Close[i] * (halfPeriod - i);
+        wma2 += Close[i] * (halfPeriod - i) * (halfPeriod - i);
+    }
+    for (int i = halfPeriod; i < period; i++) {
+        wma1 += Close[i] * (i - halfPeriod + 1);
+        wma2 += Close[i] * (i - halfPeriod + 1) * (i - halfPeriod + 1);
+    }
+    wma1 /= halfPeriod * (halfPeriod + 1) / 2;
+    wma2 /= halfPeriod * (halfPeriod + 1) * (2 * halfPeriod + 1) / 6;
+    wma3 = 2 * wma1 - wma2;
+    return wma3;
+}
+
+// Generate trading signals based on TMA and HMA indicators
+int GenerateTradingSignals(double tma, double hma) {
+    if (tma > hma) {
+        return OP_BUY;  // Enter a buy trade
+    } else {
+        return OP_SELL; // Enter a sell trade
+    }
+}
+
+// Entry point of the program
+void OnTick() {
+    double tma = CalculateTMA(8);
+    double hma = CalculateHMA(8);
+    int signal = GenerateTradingSignals(tma, hma);
+    
+    if (signal == OP_BUY) {
+        // Execute buy trade
+        // ...
+        // ...
+    } else if (signal == OP_SELL) {
+        // Execute sell trade
+        // ...
+        // ...
+    }
+}
